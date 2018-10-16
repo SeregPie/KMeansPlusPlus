@@ -8,22 +8,22 @@ export default function(values, clustersCount, options) {
 		map,
 		distanceBetween,
 	} = {...KMeans, ...options};
-	if (values.length < 1) {
-		return [];
-	}
-	if (clustersCount < 1) {
-		return [];
-	}
-	let vectors = values.map(value => map(value));
-	let centroids = [vectors[0]];
-	while (centroids.length < clustersCount) {
-		centroids.push(
-			Array_maxBy(vectors, vector =>
-				Array_min(centroids.map(centroid =>
-					distanceBetween(vector, centroid)
-				))
-			)
-		);
+	let centroids = [];
+	if (values.length > 0 && clustersCount > 0 && clustersCount < values.length) {
+		let vectors = values.map(value => map(value));
+		let indexes = values.map((value, index) => index);
+		centroids.push(0);
+		while (centroids.length < clustersCount) {
+			let newCentroid = Array_maxBy(indexes, index => {
+				let vector = vectors[index];
+				return Array_min(centroids.map(index => {
+					let centroid = vectors[index];
+					return distanceBetween(vector, centroid);
+				}));
+			});
+			centroids.push(newCentroid);
+		}
+		centroids = centroids.map(index => values[index]);
 	}
 	return KMeans(values, centroids, options);
 }

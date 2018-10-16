@@ -26,7 +26,7 @@
 		"test": "node test"
 	},
 	"dependencies": {
-		"almete.kmeans": "^18.10.15"
+		"almete.kmeans": "^18.10.16"
 	},
 	"devDependencies": {
 		"@seregpie/rollup-plugin-resolve": "^18.6.13",
