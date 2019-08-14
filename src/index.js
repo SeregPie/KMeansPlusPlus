@@ -1,29 +1,42 @@
-import KMeans from 'almete.kmeans';
+import KMeans from '@seregpie/k-means';
+import JustMyLuck from 'just-my-luck';
 
-import Array_maxBy from '/utils/Array/maxBy';
-import Array_min from '/utils/Array/min';
+import Array_indexes from './utils/Array/indexes';
+import Array_min from './utils/Array/min';
 
-export default function(values, clustersCount, options) {
+export default function(rawValues, clustersCount, options = {}) {
 	let {
-		map,
-		distanceBetween,
-	} = {...KMeans, ...options};
-	let centroids = [];
-	if (values.length > 0 && clustersCount > 0 && clustersCount < values.length) {
-		let vectors = values.map(value => map(value));
-		let indexes = values.map((value, index) => index);
-		centroids.push(0);
-		while (centroids.length < clustersCount) {
-			let newCentroid = Array_maxBy(indexes, index => {
-				let vector = vectors[index];
-				return Array_min(centroids.map(index => {
-					let centroid = vectors[index];
-					return distanceBetween(vector, centroid);
-				}));
-			});
-			centroids.push(newCentroid);
-		}
-		centroids = centroids.map(index => values[index]);
+		distance: calculateDistance = KMeans.distance,
+		map = KMeans.map,
+		random = KMeans.random,
+	} = options;
+	if (!clustersCount) {
+		return [];
 	}
-	return KMeans(values, centroids, options);
+	rawValues = Array.from(rawValues);
+	if (clustersCount === rawValues.length) {
+		return KMeans(rawValues, rawValues, options);
+	}
+	if (clustersCount > rawValues.length) {
+		return KMeans(rawValues, clustersCount, options);
+	}
+	let values = rawValues.map(map);
+	let indexedMeanCandidates = Array_indexes(values);
+	let myLuck = new JustMyLuck(random);
+	let index = myLuck.index(indexedMeanCandidates);
+	let indexedMeans = indexedMeanCandidates.splice(index, 1);
+	while (indexedMeans.length < clustersCount) {
+		let index = myLuck.indexWeighted(indexedMeanCandidates.map(i => {
+			let meanCandidate = values[i];
+			let distance = Array_min(indexedMeans.map(i => {
+				let mean = values[i];
+				return calculateDistance(meanCandidate, mean);
+			}));
+			return [i, Math.pow(distance, 2)];
+		}));
+		let [i] = indexedMeanCandidates.splice(index, 1);
+		indexedMeans.push(i);
+	}
+	let rawMeans = indexedMeans.map(i => rawValues[i]);
+	return KMeans(rawValues, rawMeans, options);
 }

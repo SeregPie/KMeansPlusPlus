@@ -1,3 +1,3 @@
 export default function(array) {
-	return array.reduce((minValue, value) => Math.min(minValue, value));
+	return array.reduce((r, n) => Math.min(r, n));
 }
