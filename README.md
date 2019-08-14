@@ -62,16 +62,14 @@ The module is globally available as `KMeansPlusPlus`.
 ## usage
 
 ```javascript
-let vectorSize = 3, vectorsCount = 1000, clustersCount = 12;
-let vectors = Array.from({length: vectorsCount}, () => Array.from(({length: vectorSize}), () => Math.random()));
-let clusters = KMeansPlusPlus(vectors, clustersCount);
-console.log(clusters.length === clustersCount); // => true
-console.log(clusters.flat().length === vectorsCount); // => true
+let vectors = [[1, 4], [6, 2], [0, 4], [1, 3], [5, 1], [4, 0]];
+let clusters = KMeans(vectors, 2);
+// => [[[1, 4], [0, 4], [1, 3]], [[6, 2], [5, 1], [4, 0]]]
 ```
 
 ---
 
-You can use any values instead of vectors. In this case you must provide a function to convert a value to a vector.
+Provide a `map` function to convert a value to a vector.
 
 ```javascript
 let Athlete = class {
@@ -85,14 +83,14 @@ let Athlete = class {
   }
 };
 let athletes = [
-  new Athlete('A', 185, 72), new Athlete('B', 170, 56), new Athlete('C', 168, 60),
+  new Athlete('A', 185, 72), new Athlete('B', 183, 84), new Athlete('C', 168, 60),
   new Athlete('D', 179, 68), new Athlete('E', 182, 72), new Athlete('F', 188, 77),
-  new Athlete('G', 180, 71), new Athlete('H', 180, 70), new Athlete('I', 183, 84),
+  new Athlete('G', 180, 71), new Athlete('H', 180, 70), new Athlete('I', 170, 56),
   new Athlete('J', 180, 88), new Athlete('K', 180, 67), new Athlete('L', 177, 76),
 ];
-let meanHeight = athletes.map(({height}) => height).reduce((r, n, i, {length}) => (r + n) / length, 0);
-let meanWeight = athletes.map(({weight}) => weight).reduce((r, n, i, {length}) => (r + n) / length, 0);
-let clusteredAthletes = KMeans(athletes, 2, {
-  map: athlete => [athlete.height / meanHeight, athlete.weight / meanWeight],
+let clusteredAthletes = KMeansPlusPlus(athletes, 2, {
+  map: athlete => [athlete.weight / athlete.height],
 });
+console.log(JSON.parse(JSON.stringify(clusteredAthletes)));
+// => [['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'], ['B', 'J', 'L']]
 ```
