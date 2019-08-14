@@ -52,6 +52,8 @@ let KMeansPlusPlus = require('@seregpie/k-means-plus-plus');
 ### browser
 
 ```html
+<script src="https://unpkg.com/just-my-luck"></script>
+<script src="https://unpkg.com/@seregpie/k-means"></script>
 <script src="https://unpkg.com/@seregpie/k-means-plus-plus"></script>
 ```
 
