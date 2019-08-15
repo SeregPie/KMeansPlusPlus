@@ -4,15 +4,25 @@ import JustMyLuck from 'just-my-luck';
 import Array_indexes from './utils/Array/indexes';
 import Array_min from './utils/Array/min';
 
-export default function(rawValues, clustersCount, options = {}) {
-	let {
-		distance: calculateDistance = KMeans.distance,
-		map = KMeans.map,
-		random = KMeans.random,
-	} = options;
+import defaultOptions from './defaultOptions';
+
+export default Object.assign(function(rawValues, clustersCount, {
+	distance: calculateDistance = defaultOptions.distance,
+	map = defaultOptions.map,
+	maxIterations = defaultOptions.maxIterations,
+	mean: calculateMean = defaultOptions.mean,
+	random = defaultOptions.random,
+} = {}) {
 	if (!clustersCount) {
 		return [];
 	}
+	let options = {
+		distance: calculateDistance,
+		map,
+		maxIterations,
+		mean: calculateMean,
+		random,
+	};
 	rawValues = Array.from(rawValues);
 	if (clustersCount === rawValues.length) {
 		return KMeans(rawValues, rawValues, options);
@@ -39,4 +49,4 @@ export default function(rawValues, clustersCount, options = {}) {
 	}
 	let rawMeans = indexedMeans.map(i => rawValues[i]);
 	return KMeans(rawValues, rawMeans, options);
-}
+}, defaultOptions);
