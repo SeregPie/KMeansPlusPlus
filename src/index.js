@@ -1,17 +1,14 @@
 import KMeans from '@seregpie/k-means';
 import JustMyLuck from 'just-my-luck';
 
-import Array_indexes from './utils/Array/indexes';
-import Array_min from './utils/Array/min';
+import Array_prototype_min from './core/Array/prototype/min';
 
-import defaultOptions from './defaultOptions';
-
-export default Object.assign(function(rawValues, clustersCount, {
-	distance: calculateDistance = defaultOptions.distance,
-	map = defaultOptions.map,
-	maxIterations = defaultOptions.maxIterations,
-	mean: calculateMean = defaultOptions.mean,
-	random = defaultOptions.random,
+let f = Object.assign(function(rawValues, clustersCount, {
+	distance: calculateDistance = f.distance,
+	map = f.map,
+	maxIterations = f.maxIterations,
+	mean: calculateMean = f.mean,
+	random = f.random,
 } = {}) {
 	if (!clustersCount) {
 		return [];
@@ -31,22 +28,24 @@ export default Object.assign(function(rawValues, clustersCount, {
 		return KMeans(rawValues, clustersCount, options);
 	}
 	let values = rawValues.map(map);
-	let indexedMeanCandidates = Array_indexes(values);
-	let myLuck = new JustMyLuck(random);
-	let index = myLuck.index(indexedMeanCandidates);
+	let indexedMeanCandidates = values.map((v, i) => i);
+	let luck = new JustMyLuck(random);
+	let index = luck.single(indexedMeanCandidates);
 	let indexedMeans = indexedMeanCandidates.splice(index, 1);
 	while (indexedMeans.length < clustersCount) {
-		let index = myLuck.indexWeighted(indexedMeanCandidates.map(i => {
+		let index = luck.singleWeighted(indexedMeanCandidates.map((i, index) => {
 			let meanCandidate = values[i];
-			let distance = Array_min(indexedMeans.map(i => {
+			let distance = Array_prototype_min(indexedMeans.map(i => {
 				let mean = values[i];
 				return calculateDistance(meanCandidate, mean);
 			}));
-			return [i, Math.pow(distance, 2)];
+			return [index, Math.pow(distance, 2)];
 		}));
 		let [i] = indexedMeanCandidates.splice(index, 1);
 		indexedMeans.push(i);
 	}
 	let rawMeans = indexedMeans.map(i => rawValues[i]);
 	return KMeans(rawValues, rawMeans, options);
-}, defaultOptions);
+}, KMeans);
+
+export default f;

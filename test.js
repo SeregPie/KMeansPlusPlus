@@ -1,4 +1,4 @@
-let Assert = require('assert').strict;
+let assert = require('assert').strict;
 
 let KMeansPlusPlus = require('./index');
 
@@ -6,32 +6,26 @@ Array.from({length: 32}, () => {
 	let vectors = [[1, 4], [6, 2], [0, 4], [1, 3], [5, 1], [4, 0]];
 	let clusters = KMeansPlusPlus(vectors, 2);
 	clusters.sort((a, b) => vectors.indexOf(a[0]) - vectors.indexOf(b[0]));
-	Assert.deepEqual(clusters, [[[1, 4], [0, 4], [1, 3]], [[6, 2], [5, 1], [4, 0]]]);
+	assert.deepEqual(clusters, [[[1, 4], [0, 4], [1, 3]], [[6, 2], [5, 1], [4, 0]]]);
 });
-
 {
 	let vectorSize = 3;
 	let vectorsCount = 1000;
 	let clustersCount = 12;
 	let vectors = Array.from({length: vectorsCount}, () => Array.from(({length: vectorSize}), () => Math.random()));
 	let clusters = KMeansPlusPlus(vectors, clustersCount);
-	Assert.equal(clusters.length, clustersCount);
-	Assert.equal(clusters.flat().length, vectorsCount);
+	assert.equal(clusters.length, clustersCount);
+	assert.equal(clusters.flat().length, vectorsCount);
 }
-
-Assert.deepEqual(KMeansPlusPlus([], 3), [[], [], []]);
-
-Assert.deepEqual(KMeansPlusPlus([[1], [2], [3]], 0), []);
-
+assert.deepEqual(KMeansPlusPlus([], 3), [[], [], []]);
+assert.deepEqual(KMeansPlusPlus([[1], [2], [3]], 0), []);
 {
 	let vectors = [[1], [2], [3]];
-	Assert.deepEqual(KMeansPlusPlus(vectors, 1), [vectors]);
+	assert.deepEqual(KMeansPlusPlus(vectors, 1), [vectors]);
 }
-
 Array.from({length: 32}, () => {
-	Assert.deepEqual(KMeansPlusPlus([[1]], 2), [[[1]], []]);
+	assert.deepEqual(KMeansPlusPlus([[1]], 2), [[[1]], []]);
 });
-
 Array.from({length: 32}, () => {
 	let Athlete = class {
 		constructor(name, height, weight) {
@@ -53,5 +47,5 @@ Array.from({length: 32}, () => {
 		map: athlete => [athlete.weight / athlete.height],
 	});
 	clusteredAthletes.sort((a, b) => athletes.indexOf(a[0]) - athletes.indexOf(b[0]));
-	Assert.deepEqual(JSON.parse(JSON.stringify(clusteredAthletes)), [['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'], ['B', 'J', 'L']]);
+	assert.deepEqual(JSON.parse(JSON.stringify(clusteredAthletes)), [['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'], ['B', 'J', 'L']]);
 });
