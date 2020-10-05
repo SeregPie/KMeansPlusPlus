@@ -30,10 +30,10 @@ let f = Object.assign(function(rawValues, clustersCount, {
 	let values = rawValues.map(map);
 	let indexedMeanCandidates = values.map((v, i) => i);
 	let luck = new JustMyLuck(random);
-	let index = luck.single(indexedMeanCandidates);
+	let index = luck.pick(indexedMeanCandidates);
 	let indexedMeans = indexedMeanCandidates.splice(index, 1);
 	while (indexedMeans.length < clustersCount) {
-		let index = luck.singleWeighted(indexedMeanCandidates.map((i, index) => {
+		let index = luck.pickWeighted(indexedMeanCandidates.map((i, index) => {
 			let meanCandidate = values[i];
 			let distance = Array_prototype_min(indexedMeans.map(i => {
 				let mean = values[i];
