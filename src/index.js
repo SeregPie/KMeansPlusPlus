@@ -1,7 +1,7 @@
 import KMeans from '@seregpie/k-means';
 import JustMyLuck from 'just-my-luck';
 
-import Array_prototype_min from './core/Array/prototype/min';
+import Array_prototype_min from './@core/Array/prototype/min';
 
 let f = Object.assign(function(rawValues, clustersCount, {
 	distance: calculateDistance = f.distance,
